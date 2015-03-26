@@ -11,7 +11,7 @@ class SysguardServiceProvider extends ServiceProvider {
      */
     public function boot()
     {
-        $this->package('ifaniqbal/sysguard', 'ifaniqbal/sysguard');
+
     }
 
     /**
@@ -31,6 +31,8 @@ class SysguardServiceProvider extends ServiceProvider {
      */
     protected function registerSysguard()
     {
+        $this->app->bind('\Illuminate\Contracts\Auth\UserProvider', '\Ifaniqbal\Sysguard\SentryUserProvider');
+
         $this->app['sysguard'] = $this->app->share(function($app)
         {
             return new $this->app->make('Ifaniqbal\Sysguard\Sysguard');
