@@ -8,4 +8,12 @@ class Group extends Model {
         return $this->belongsToMany('Ifaniqbal\Sysguard\User');
     }
 
+    public function menus() {
+        return $this->belongsToMany('Ifaniqbal\Sysguard\Menu');
+    }
+
+    public function permissions() {
+        return $this->belongsToMany('Ifaniqbal\Sysguard\Permission');
+    }
+
 }

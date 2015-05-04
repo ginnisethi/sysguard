@@ -5,10 +5,17 @@ use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Auth\Passwords\CanResetPassword;
+use Ifaniqbal\Sysguard\Group;
 
-class User extends Model implements AuthenticatableContract, CanResetPasswordContract {
+class User extends Model implements AuthenticatableContract, CanResetPasswordContract, AuthorizableContract {
 
-    use Authenticatable, CanResetPassword;
+    use Authenticatable, CanResetPassword, Authorizable;
+
+    public function __construct(array $attributes = array())
+    {
+        parent::__construct($attributes);
+        $this->setGroupModel(new Group);
+    }
 
     /**
      * The database table used by the model.
