@@ -1,6 +1,7 @@
 <?php namespace Ifaniqbal\Sysguard;
 
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Auth\EloquentUserProvider;
 
 class SysguardServiceProvider extends ServiceProvider {
 
@@ -11,7 +12,17 @@ class SysguardServiceProvider extends ServiceProvider {
      */
     public function boot()
     {
+        \Auth::extend('sysguard', function($app)
+        {
+            return new EloquentUserProvider(
+                $app['hash'],
+                $app['config']['auth.model']
+            );
+        });
 
+        $this->publishes([
+            __DIR__.'/migrations/' => database_path('/migrations')
+        ], 'migrations');
     }
 
     /**
@@ -21,24 +32,10 @@ class SysguardServiceProvider extends ServiceProvider {
      */
     public function register()
     {
-        $this->registerSysguard();
-    }
-
-    /**
-     * Register Sysguard
-     * 
-     * @return void
-     */
-    protected function registerSysguard()
-    {
-        $this->app->bind('\Illuminate\Contracts\Auth\UserProvider', '\Ifaniqbal\Sysguard\SentryUserProvider');
-
-        $this->app['sysguard'] = $this->app->share(function($app)
+        $this->app->singleton('sysguard', function($app)
         {
-            return new $this->app->make('Ifaniqbal\Sysguard\Sysguard');
+            return $app->make('\Ifaniqbal\Sysguard\Sysguard');
         });
-
-        $this->app->alias('sysguard', 'Ifaniqbal\Sysguard\Sysguard');
     }
 
 }
