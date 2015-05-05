@@ -2,6 +2,7 @@
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Auth\EloquentUserProvider;
+use Illuminate\Foundation\Application;
 
 class SysguardServiceProvider extends ServiceProvider {
 
@@ -10,7 +11,7 @@ class SysguardServiceProvider extends ServiceProvider {
      *
      * @return void
      */
-    public function boot()
+    public function boot(Application $app)
     {
         \Auth::extend('sysguard', function($app)
         {
@@ -21,7 +22,7 @@ class SysguardServiceProvider extends ServiceProvider {
         });
 
         $this->publishes([
-            __DIR__.'/migrations/' => database_path('/migrations')
+            __DIR__.'/migrations/' => $app->databasePath().'/migrations'
         ], 'migrations');
     }
 
