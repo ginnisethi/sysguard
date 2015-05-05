@@ -11,7 +11,7 @@ class SysguardServiceProvider extends ServiceProvider {
      *
      * @return void
      */
-    public function boot(Application $app)
+    public function boot()
     {
         \Auth::extend('sysguard', function($app)
         {
@@ -22,7 +22,7 @@ class SysguardServiceProvider extends ServiceProvider {
         });
 
         $this->publishes([
-            __DIR__.'/migrations/' => $app->databasePath().'/migrations'
+            __DIR__.'/migrations/' => $this->app->databasePath().'/migrations'
         ], 'migrations');
     }
 
