@@ -3,6 +3,8 @@
 trait Authorizable {
 
     protected $groupModel;
+
+    protected $activeGroup = null;
     
     /**
      * Set group model.
@@ -31,8 +33,13 @@ trait Authorizable {
      */
     public function getActiveGroup()
     {
-        return $this->getGroupModel()->find(
-            $this->getActiveGroupId());
+        if ($this->activeGroup == null) {
+            $this->setActiveGroup(
+                $this->getGroupModel()->find($this->getActiveGroupId())
+            );
+        }
+
+        return $this->activeGroup;
     }
 
     /**
@@ -42,6 +49,7 @@ trait Authorizable {
      */
     public function setActiveGroup($group)
     {
+        $this->activeGroup = $group;
         $this->setActiveGroupId($group->id);
     }
 
