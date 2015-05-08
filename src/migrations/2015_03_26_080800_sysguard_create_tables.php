@@ -19,6 +19,7 @@ class SysguardCreateTables extends Migration {
             $table->string('email');
             $table->string('password');
             $table->integer('active_group_id')->unsigned()->nullable();
+            $table->rememberToken();
             $table->nullableTimestamps();
         });
 
