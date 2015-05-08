@@ -1,9 +1,11 @@
-<?php namespace Ifaniqbal\Sysguard;
+<?php
+
+namespace Ifaniqbal\Sysguard;
 
 use Illuminate\Support\Facades\Facade;
 
-class SysguardFacade extends Facade {
-
+class SysguardFacade extends Facade
+{
     /**
      * Get the registered name of the component.
      *
@@ -13,5 +15,4 @@ class SysguardFacade extends Facade {
     {
         return 'sysguard';
     }
-
 }

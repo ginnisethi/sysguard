@@ -1,10 +1,12 @@
-<?php namespace Ifaniqbal\Sysguard;
+<?php
+
+namespace Ifaniqbal\Sysguard;
 
 use Illuminate\Contracts\Auth\Guard as GuardContract;
 use Illuminate\Routing\Router;
 
-class Sysguard {
-
+class Sysguard
+{
     private $auth;
 
     private $router;
@@ -24,13 +26,14 @@ class Sysguard {
         if ($activeGroup != null) {
             return $activeGroup->permissions()->where('route', $route)->exists();
         }
-        
+
         return false;
     }
 
     public function authorize()
     {
         $route = $this->router->current()->getPath();
+
         return $this->authorizeByRoute($route);
     }
 
@@ -60,10 +63,9 @@ class Sysguard {
             $hierarchicalMenu = [];
             if ($activeGroup != null) {
                 $hierarchicalMenu = $activeGroup->menus()
-                    ->with(['children' => function($query)
-                        {
+                    ->with(['children' => function ($query) {
                             $query->orderBy('order');
-                        }])
+                        }, ])
                     ->where('parent_id', 0)
                     ->where('enabled', 1)
                     ->orderBy('order')
@@ -75,5 +77,4 @@ class Sysguard {
 
         return $this->hierarchicalMenu;
     }
-
 }

@@ -1,11 +1,12 @@
-<?php namespace Ifaniqbal\Sysguard;
+<?php
+
+namespace Ifaniqbal\Sysguard;
 
 use Closure;
 use Illuminate\Contracts\Auth\Guard;
-use Ifaniqbal\Sysguard\Sysguard;
 
-class AuthorizeMiddleware {
-
+class AuthorizeMiddleware
+{
     /**
      * The Guard implementation.
      *
@@ -30,8 +31,7 @@ class AuthorizeMiddleware {
     /**
      * Create a new filter instance.
      *
-     * @param  Guard  $auth
-     * @return void
+     * @param Guard $auth
      */
     public function __construct(Guard $auth, Sysguard $authorize)
     {
@@ -42,8 +42,9 @@ class AuthorizeMiddleware {
     /**
      * Handle an incoming request.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure  $next
+     * @param \Illuminate\Http\Request $request
+     * @param \Closure                 $next
+     *
      * @return mixed
      */
     public function handle($request, Closure $next)
@@ -62,5 +63,4 @@ class AuthorizeMiddleware {
 
         return $next($request);
     }
-
 }

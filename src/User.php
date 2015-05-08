@@ -1,20 +1,21 @@
-<?php namespace Ifaniqbal\Sysguard;
+<?php
+
+namespace Ifaniqbal\Sysguard;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Auth\Passwords\CanResetPassword;
-use Ifaniqbal\Sysguard\Group;
 
-class User extends Model implements AuthenticatableContract, CanResetPasswordContract, AuthorizableContract {
-
+class User extends Model implements AuthenticatableContract, CanResetPasswordContract, AuthorizableContract
+{
     use Authenticatable, CanResetPassword, Authorizable;
 
     public function __construct(array $attributes = array())
     {
         parent::__construct($attributes);
-        $this->setGroupModel(new Group);
+        $this->setGroupModel(new Group());
     }
 
     /**
@@ -38,8 +39,8 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
      */
     protected $hidden = ['password', 'remember_token'];
 
-    public function groups() {
+    public function groups()
+    {
         return $this->belongsToMany('Ifaniqbal\Sysguard\Group');
     }
-
 }

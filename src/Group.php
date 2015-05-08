@@ -1,21 +1,25 @@
-<?php namespace Ifaniqbal\Sysguard;
+<?php
+
+namespace Ifaniqbal\Sysguard;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Group extends Model {
-
+class Group extends Model
+{
     protected $fillable = ['name', 'code', 'level'];
 
-    public function users() {
+    public function users()
+    {
         return $this->belongsToMany('Ifaniqbal\Sysguard\User');
     }
 
-    public function menus() {
+    public function menus()
+    {
         return $this->belongsToMany('Ifaniqbal\Sysguard\Menu');
     }
 
-    public function permissions() {
+    public function permissions()
+    {
         return $this->belongsToMany('Ifaniqbal\Sysguard\Permission');
     }
-
 }

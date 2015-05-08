@@ -3,17 +3,14 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class SysguardCreateTables extends Migration {
-
+class SysguardCreateTables extends Migration
+{
     /**
      * Run the migrations.
-     *
-     * @return void
      */
     public function up()
     {
-        Schema::create('users', function(Blueprint $table)
-        {
+        Schema::create('users', function (Blueprint $table) {
             $table->increments('id');
             $table->string('name');
             $table->string('email');
@@ -23,8 +20,7 @@ class SysguardCreateTables extends Migration {
             $table->nullableTimestamps();
         });
 
-        Schema::create('groups', function(Blueprint $table)
-        {
+        Schema::create('groups', function (Blueprint $table) {
             $table->increments('id');
             $table->string('name');
             $table->string('code')->nullable()->index();
@@ -32,8 +28,7 @@ class SysguardCreateTables extends Migration {
             $table->nullableTimestamps();
         });
 
-        Schema::create('menus', function(Blueprint $table)
-        {
+        Schema::create('menus', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('parent_id')->unsigned()->index()->nullable();
             $table->string('name')->nullable()->index();
@@ -44,44 +39,37 @@ class SysguardCreateTables extends Migration {
             $table->nullableTimestamps();
         });
 
-        Schema::create('permissions', function(Blueprint $table)
-        {
+        Schema::create('permissions', function (Blueprint $table) {
             $table->increments('id');
             $table->string('route')->nullable()->index();
             $table->boolean('enabled')->nullable();
             $table->nullableTimestamps();
         });
 
-        Schema::create('group_user', function(Blueprint $table)
-        {
+        Schema::create('group_user', function (Blueprint $table) {
             $table->primary(['group_id', 'user_id']);
             $table->integer('group_id')->unsigned();
             $table->integer('user_id')->unsigned();
             $table->nullableTimestamps();
         });
 
-        Schema::create('group_menu', function(Blueprint $table)
-        {
+        Schema::create('group_menu', function (Blueprint $table) {
             $table->primary(['group_id', 'menu_id']);
             $table->integer('group_id')->unsigned();
             $table->integer('menu_id')->unsigned();
             $table->nullableTimestamps();
         });
 
-        Schema::create('group_permission', function(Blueprint $table)
-        {
+        Schema::create('group_permission', function (Blueprint $table) {
             $table->primary(['group_id', 'permission_id']);
             $table->integer('group_id')->unsigned();
             $table->integer('permission_id')->unsigned();
             $table->nullableTimestamps();
         });
-
     }
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
     public function down()
     {

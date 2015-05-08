@@ -1,7 +1,9 @@
-<?php namespace Ifaniqbal\Sysguard;
+<?php
 
-interface AuthorizableContract {
+namespace Ifaniqbal\Sysguard;
 
+interface AuthorizableContract
+{
     /**
      * Set group model.
      *
@@ -43,5 +45,4 @@ interface AuthorizableContract {
      * @return mixed
      */
     public function setActiveGroupId($group_id);
-
 }

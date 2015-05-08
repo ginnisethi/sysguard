@@ -1,11 +1,13 @@
-<?php namespace Ifaniqbal\Sysguard;
+<?php
 
-trait Authorizable {
+namespace Ifaniqbal\Sysguard;
 
+trait Authorizable
+{
     protected $groupModel;
 
     protected $activeGroup = null;
-    
+
     /**
      * Set group model.
      *
@@ -60,26 +62,21 @@ trait Authorizable {
      */
     public function getActiveGroupId()
     {
-        if ($this->active_group_id != 0)
-        {
+        if ($this->active_group_id != 0) {
             if ($this->groups()->where('group_id', $this->active_group_id)->exists()) {
                 return $this->active_group_id;
             } else {
                 $this->setActiveGroupId(0);
-                
+
                 return 0;
             }
-        }
-        else
-        {
-            if ($this->groups->count() > 0)
-            {
+        } else {
+            if ($this->groups->count() > 0) {
                 $group_id = $this->groups->sortByDesc('level')->first()->id;
                 $this->setActiveGroupId($group_id);
+
                 return $this->getActiveGroupId();
-            }
-            else
-            {
+            } else {
                 return 0;
             }
         }

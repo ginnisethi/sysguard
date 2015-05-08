@@ -1,13 +1,12 @@
 <?php
 
-use Illuminate\Auth\EloquentUserProvider;
 use Ifaniqbal\Sysguard\User;
 use Ifaniqbal\Sysguard\Group;
 use Ifaniqbal\Sysguard\Permission;
 use Ifaniqbal\Sysguard\Menu;
 
-class SysguardTest extends Orchestra\Testbench\TestCase {
-    
+class SysguardTest extends Orchestra\Testbench\TestCase
+{
     public function setUp()
     {
         parent::setUp();
@@ -22,7 +21,7 @@ class SysguardTest extends Orchestra\Testbench\TestCase {
     protected function getPackageAliases()
     {
         return [
-            'Sysguard' => 'Ifaniqbal\Sysguard\SysguardFacade'
+            'Sysguard' => 'Ifaniqbal\Sysguard\SysguardFacade',
         ];
     }
 
@@ -32,14 +31,14 @@ class SysguardTest extends Orchestra\Testbench\TestCase {
         $app['config']['auth.model'] = 'Ifaniqbal\Sysguard\User';
         $app['config']['database'] = array(
             'default' => 'sqlite',
-         
+
             'connections' => array(
                 'sqlite' => array(
-                    'driver'   => 'sqlite',
+                    'driver' => 'sqlite',
                     'database' => ':memory:',
-                    'prefix'   => ''
+                    'prefix' => '',
                 ),
-            )
+            ),
         );
     }
 
@@ -53,26 +52,26 @@ class SysguardTest extends Orchestra\Testbench\TestCase {
 
         $user = User::create(
         [
-            'name'      => 'Ifan Iqbal',
-            'email'     => 'ifaniqbal.com@gmail.com',
-            'password'  => 'secret'
+            'name' => 'Ifan Iqbal',
+            'email' => 'ifaniqbal.com@gmail.com',
+            'password' => 'secret',
         ]);
 
         $group = Group::create(
         [
-            'name' => 'admin'
+            'name' => 'admin',
         ]);
 
         $permission = Permission::create(
         [
-            'route' => 'admin'
+            'route' => 'admin',
         ]);
 
         $user->groups()->attach($group);
         $group->permissions()->attach($permission);
 
         Auth::loginUsingId(1);
-        
+
         $this->assertEquals(true, Auth::check());
         $this->assertEquals('Ifan Iqbal', Auth::user()->name);
 
@@ -102,31 +101,31 @@ class SysguardTest extends Orchestra\Testbench\TestCase {
         Artisan::call('migrate');
 
         $user = User::create([
-            'name'      => 'Ifan Iqbal',
-            'email'     => 'ifaniqbal.com@gmail.com',
-            'password'  => 'secret'
+            'name' => 'Ifan Iqbal',
+            'email' => 'ifaniqbal.com@gmail.com',
+            'password' => 'secret',
         ]);
 
         $group = Group::create([
-            'name' => 'admin'
+            'name' => 'admin',
         ]);
 
         for ($i = 0; $i < 2; $i++) {
             $menu = Menu::create([
                 'parent_id' => 0,
-                'name' => 'Menu ' . $i + 1,
+                'name' => 'Menu '.$i + 1,
                 'order' => $i + 1,
                 'enabled' => 1,
             ]);
 
-                Menu::create([
+            Menu::create([
                     'parent_id' => $menu->id,
                     'name' => 'Child 1',
                     'order' => 1,
                     'enabled' => 1,
                 ]);
 
-                Menu::create([
+            Menu::create([
                     'parent_id' => $menu->id,
                     'name' => 'Child 2',
                     'order' => 2,
@@ -137,7 +136,6 @@ class SysguardTest extends Orchestra\Testbench\TestCase {
         $menus = Menu::get();
         $user->groups()->attach($group);
         $group->menus()->sync($menus);
-        
 
         Auth::loginUsingId($user->id);
 
@@ -149,38 +147,38 @@ class SysguardTest extends Orchestra\Testbench\TestCase {
     }
 
     /**
-     * Test effective menu and permission
+     * Test effective menu and permission.
      */
     public function testEffectiveItems()
     {
         Artisan::call('migrate');
 
         $user = User::create([
-            'name'      => 'Ifan Iqbal',
-            'email'     => 'ifaniqbal.com@gmail.com',
-            'password'  => 'secret'
+            'name' => 'Ifan Iqbal',
+            'email' => 'ifaniqbal.com@gmail.com',
+            'password' => 'secret',
         ]);
 
         $group = Group::create([
-            'name' => 'admin'
+            'name' => 'admin',
         ]);
 
         for ($i = 0; $i < 2; $i++) {
             $menu = Menu::create([
                 'parent_id' => 0,
-                'name' => 'Menu ' . $i + 1,
+                'name' => 'Menu '.$i + 1,
                 'order' => $i + 1,
                 'enabled' => 1,
             ]);
 
-                Menu::create([
+            Menu::create([
                     'parent_id' => $menu->id,
                     'name' => 'Child 1',
                     'order' => 1,
                     'enabled' => 1,
                 ]);
 
-                Menu::create([
+            Menu::create([
                     'parent_id' => $menu->id,
                     'name' => 'Child 2',
                     'order' => 2,
@@ -190,7 +188,7 @@ class SysguardTest extends Orchestra\Testbench\TestCase {
 
         for ($i = 0; $i < 4; $i++) {
             Permission::create([
-                'route' => 'permission_' . $i + 1,
+                'route' => 'permission_'.$i + 1,
                 'enabled' => 1,
             ]);
         }
@@ -199,7 +197,7 @@ class SysguardTest extends Orchestra\Testbench\TestCase {
         $permissions = Permission::get();
         $user->groups()->attach($group);
         $group->menus()->sync($menus);
-        $group->permissions()->sync($permissions);        
+        $group->permissions()->sync($permissions);
 
         Auth::loginUsingId($user->id);
 
