@@ -61,6 +61,17 @@ Run artisan migrate to create the required tables on database:
 php artisan migrate
 ```
 
+This package use watson/boostrap-form. So, you need to add these service providers:
+
+    'Collective\Html\HtmlServiceProvider',
+    'Watson\BootstrapForm\BootstrapFormServiceProvider',
+
+Then, add these aliases:
+
+    'Form'      => 'Collective\Html\FormFacade',
+    'HTML'      => 'Collective\Html\HtmlFacade',
+    'BootstrapForm' => 'Watson\BootstrapForm\Facades\BootstrapForm',
+
 ## Usage
 
 To check authorization for current user in current route:
