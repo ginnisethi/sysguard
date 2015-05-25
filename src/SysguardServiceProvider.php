@@ -22,6 +22,8 @@ class SysguardServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__.'/migrations/' => $this->app->databasePath().'/migrations',
         ], 'migrations');
+
+        $this->loadViewsFrom(__DIR__.'/views', 'sysguard');
     }
 
     /**
