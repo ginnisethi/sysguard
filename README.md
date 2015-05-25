@@ -61,6 +61,8 @@ Run artisan migrate to create the required tables on database:
 php artisan migrate
 ```
 
+You may need to run `php artisan fresh` so that the migration doesn't conflict with Laravel user table migration.
+
 This package use watson/boostrap-form. So, you need to add these service providers:
 
     'Collective\Html\HtmlServiceProvider',
