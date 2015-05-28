@@ -11,3 +11,5 @@
 <!-- AdminLTE Skins. Choose a skin from the css/skins 
      folder instead of downloading all of them to reduce the load. -->
 <link href="{{ asset('/adminlte/dist/css/skins/skin-blue.min.css') }}" rel="stylesheet" type="text/css" />
+<!-- jQuery 1.11.2 -->
+<script src="{{ asset('/js/jquery-1.11.2.min.js') }}"></script>
