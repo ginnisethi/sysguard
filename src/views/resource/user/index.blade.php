@@ -1,10 +1,13 @@
 @extends('sysguard::layouts.master')
 @section('content-header')
-    <h1>User</h1>
+    <h1>Users</h1>
 @stop
 @section('content')
     <div class="row">
-        <div class="col-md-12 pull-right text-right"><strong>Total data:</strong> <span class="badge alert-info">{{ $data['items']->total() }}</span></div>
+        <div class="col-md-2">
+            <a href="{{ route('user.create') }}" class="btn btn-primary">Add</a>
+        </div>
+        <div class="col-md-10 pull-right text-right"><strong>Total data:</strong> <span class="badge alert-info">{{ $data['items']->total() }}</span></div>
     </div>
     <br>
     <div class="row">
