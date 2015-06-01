@@ -5,47 +5,41 @@ use \View;
 use \Redirect;
 use \Input;
 use \Request;
+use \DB;
 
 class MenuController extends BaseController {
 
+    /**
+     * Display a listing of the resource.
+     *
+     * @return Response
+     */
     public function index()
     {
-        $this->data['items'] = Menu::orderBy('url')->paginate($this->perPage);
-        View::share('data', $this->data);
-        return View::make('sysguard:pages.menu.index');
+        $menus = Menu::orderBy('url')->paginate();
+        return View::make('sysguard::resource.menu.index', compact('menus'));
     }
 
-    public function manage()
-    {
-        $this->data['items'] = Menu::orderBy('url')->get();
-        View::share('data', $this->data);
-        return View::make('sysguard:pages.menu.manage');
-    }
-
-    public function detail($id)
-    {
-        $this->data['item'] = Menu::with('parent', 'children.children', 'groups')->find($id);
-        $this->data['item']->group->sortBy('name');
-        $this->data['item']->child->sortBy('order')->each(function($child){
-            if ($child->child != null)
-            {
-                $child->child->sortBy('order');
-            }
-        });
-        View::share('data', $this->data);
-        return View::make('sysguard:pages.menu.detail');
-    }
-
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return Response
+     */
     public function create()
     {
-        if (Request::isMethod('get'))
-        {
-            $this->data = array();
-            $this->data['items'] = Menu::orderBy('url')->get();
-            View::share('data', $this->data);
-            return View::make('sysguard:pages.menu.create');
-        }
-        else if (Request::isMethod('post'))
+        $menu = new Menu;
+        $menus = Menu::orderBy('url')->get();
+        return View::make('sysguard::resource.menu.create', compact('menus', 'menu'));
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @return Response
+     */
+    public function store()
+    {
+        DB::transaction(function() 
         {
             $menu = Menu::create(Input::all());
             if (Input::get('parent_id') != 0)
@@ -54,38 +48,78 @@ class MenuController extends BaseController {
                 $menu->parent()->associate($parent);
                 $menu->save();
             }
-            return Redirect::to('menu/manage');
-        }
+        });
+
+        return redirect()->route('menu.index');
     }
 
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return Response
+     */
+    public function show($id)
+    {
+        $menu = Menu::with('parent', 'children.children', 'groups')->findOrFail($id);
+        $menu->groups->sortBy('name');
+        $menu->children->sortBy('order')->each(function($child){
+            if ($child->child != null)
+            {
+                $child->child->sortBy('order');
+            }
+        });
+        $menus = Menu::orderBy('url')->get();
+        return View::make('sysguard::resource.menu.show', compact('menu', 'menus'));
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  int  $id
+     * @return Response
+     */
+    public function edit($id)
+    {
+        $menu = Menu::findOrFail($id);
+        $menus = Menu::whereNotIn('id', [$id])->get();
+        return View::make('sysguard::resource.menu.edit', compact('menu', 'menus'));
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  int  $id
+     * @return Response
+     */
     public function update($id)
     {
-        if (Request::isMethod('get'))
+        DB::transaction(function() use ($id)
         {
-            $this->data = array();
-            $this->data['item'] = Menu::find($id);
-            $this->data['items'] = Menu::where('id', '<>', $id)->get();
-            View::share('data', $this->data);
-            return View::make('sysguard:pages.menu.update');
-        }
-        else if (Request::isMethod('post'))
-        {
-            $menu = Menu::find($id);
+            $menu = Menu::findOrFail($id);
             $menu->update(Input::all());
+
             if (Input::get('parent_id') != 0)
             {
-                $parent = Menu::find(Input::get('parent_id'));
+                $parent = Menu::findOrFail(Input::get('parent_id'));
                 $menu->parent()->associate($parent);
                 $menu->save();
             }
-            return Redirect::to('menu/detail/' . $id);
-        }
+        });
+
+        return redirect()->route('menu.show', $id);
     }
 
-    public function delete($id)
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return Response
+     */
+    public function destroy($id)
     {
-        $menu = Menu::find($id);
+        $menu = Menu::findOrFail($id);
         $menu->delete();
-        return Redirect::to('menu/manage');
+        return redirect()->route('menu.index');
     }
 }
