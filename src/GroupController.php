@@ -2,113 +2,132 @@
 namespace Ifaniqbal\Sysguard;
 
 use \View;
-use \Redirect;
 use \Input;
-use \Request;
+use \DB;
 
 class GroupController extends BaseController {
-
+    
+    /**
+     * Display a listing of the resource.
+     *
+     * @return Response
+     */
     public function index()
     {
-        $this->data['items'] = Group::orderBy('name')->paginate($this->perPage);
-        View::share('data', $this->data);
-        return View::make('sysguard:pages.group.index');
+        $groups = Group::orderBy('name')->paginate();
+        return View::make('sysguard::resource.group.index', compact('groups'));
     }
 
-    public function manage()
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return Response
+     */
+    public function create()
     {
-        $this->data['items'] = Group::orderBy('name')->get();
-        View::share('data', $this->data);
-        return View::make('sysguard:pages.group.manage');
+        $group = new Group;
+        $menus = Menu::orderBy('name')->get();
+        $permissions = Permission::orderBy('route')->get();
+        return View::make('sysguard::resource.group.create', compact('group', 'menus', 'permissions'));
     }
 
-    public function detail($id)
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @return Response
+     */
+    public function store()
     {
-        $this->data['item'] = Group::with(array(
+        DB::transaction(function() use ($id)
+        {
+            $group = Group::create(Input::all());
+
+            $menu_ids = Input::get('menu_ids')?: [];
+            $group->menus()->sync($menu_ids);
+
+            $permission_ids = Input::get('permission_ids')?: [];
+            $group->permissions()->sync($permission_ids);
+        });
+
+        return redirect()->route('group.index');
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return Response
+     */
+    public function show($id)
+    {
+        $group = Group::with(array(
             'menus' => function($query){
                 $query->orderBy('name');
             },
             'permissions' => function($query){
                 $query->orderBy('route');
             },
-        ))->find($id);
-        View::share('data', $this->data);
-        return View::make('sysguard:pages.group.detail');
+        ))->findOrFail($id);
+        return View::make('sysguard::resource.group.show', compact('group'));
     }
 
-    public function create()
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  int  $id
+     * @return Response
+     */
+    public function edit($id)
     {
-        if (Request::isMethod('get'))
-        {
-            $this->data = array();
-            $this->data['menus'] = Menu::orderBy('name')->get();
-            $this->data['permissions'] = Permission::orderBy('route')->get();
-            View::share('data', $this->data);
-            return View::make('sysguard:pages.group.create');
-        }
-        else if (Request::isMethod('post'))
-        {
-            $group = Group::create(Input::all());
-            $menu_ids = Input::get('menu_ids');
-            if ($menu_ids == null)
-            {
-                $menu_ids = array();
-            }
-            $group->menu()->sync($menu_ids);
+        $group = Group::with(array(
+            'menus' => function($query){
+                $query->orderBy('name');
+            },
+            'permissions' => function($query){
+                $query->orderBy('route');
+            },
+        ))->findOrFail($id);
 
-            $permission_ids = Input::get('permission_ids');
-            if ($permission_ids == null)
-            {
-                $permission_ids = array();
-            }
-            $group->permission()->sync($permission_ids);
-            return Redirect::to('group/manage');
-        }
+        $menus = Menu::orderBy('name')->get();
+        $permissions = Permission::orderBy('route')->get();
+
+        return View::make('sysguard::resource.group.edit', compact('group', 'menus', 'permissions'));
     }
 
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  int  $id
+     * @return Response
+     */
     public function update($id)
     {
-        if (Request::isMethod('get'))
+        DB::transaction(function() use ($id)
         {
-            $this->data = array();
-            $this->data['item'] = Group::with(array(
-                'menus' => function($query){
-                    $query->orderBy('name');
-                },
-                'permissions' => function($query){
-                    $query->orderBy('route');
-                },
-            ))->find($id);
-            $this->data['menus'] = Menu::orderBy('name')->get();
-            $this->data['permissions'] = Permission::orderBy('route')->get();
-            View::share('data', $this->data);
-            return View::make('sysguard:pages.group.update');
-        }
-        else if (Request::isMethod('post'))
-        {
-            $group = Group::find($id);
+            $group = Group::findOrFail($id);
             $group->update(Input::all());
-            $menu_ids = Input::get('menu_ids');
-            if ($menu_ids == null)
-            {
-                $menu_ids = array();
-            }
-            $group->menu()->sync($menu_ids);
 
-            $permission_ids = Input::get('permission_ids');
-            if ($permission_ids == null)
-            {
-                $permission_ids = array();
-            }
-            $group->permission()->sync($permission_ids);
-            return Redirect::to('group/detail/' . $id);
-        }
+            $menu_ids = Input::get('menu_ids')?: [];
+            $group->menus()->sync($menu_ids);
+
+            $permission_ids = Input::get('permission_ids')?: [];
+            $group->permissions()->sync($permission_ids);
+        });
+
+        return redirect()->route('group.show', $id);
     }
 
-    public function delete($id)
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return Response
+     */
+    public function destroy($id)
     {
-        $group = Group::find($id);
+        $group = Group::findOrFail($id);
         $group->delete();
-        return Redirect::to('group/manage');
+        return redirect()->route('group.index');
     }
+
 }
