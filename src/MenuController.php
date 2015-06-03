@@ -1,13 +1,19 @@
 <?php
 namespace Ifaniqbal\Sysguard;
 
+use Illuminate\Http\Request;
 use \View;
 use \Redirect;
 use \Input;
-use \Request;
 use \DB;
 
 class MenuController extends BaseController {
+
+    protected $rules = [
+        'name' => 'required',
+        'code' => 'required',
+        'url' => 'required',
+    ];
 
     /**
      * Display a listing of the resource.
@@ -37,8 +43,10 @@ class MenuController extends BaseController {
      *
      * @return Response
      */
-    public function store()
+    public function store(Request $request)
     {
+        $this->validate($request, $this->rules);
+     
         DB::transaction(function() 
         {
             $menu = Menu::create(Input::all());
@@ -92,8 +100,10 @@ class MenuController extends BaseController {
      * @param  int  $id
      * @return Response
      */
-    public function update($id)
+    public function update(Request $request, $id)
     {
+        $this->validate($request, $this->rules);
+        
         DB::transaction(function() use ($id)
         {
             $menu = Menu::findOrFail($id);

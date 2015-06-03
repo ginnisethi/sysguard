@@ -1,9 +1,11 @@
 <?php
 namespace Ifaniqbal\Sysguard;
 
-use \Illuminate\Routing\Controller;
+use Illuminate\Routing\Controller;
+use Illuminate\Foundation\Validation\ValidatesRequests;
 
 class BaseController extends Controller {
+    use ValidatesRequests;
 
     const PER_PAGE = 10;
     protected $perPage;

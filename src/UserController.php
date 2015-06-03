@@ -1,11 +1,18 @@
 <?php
 namespace Ifaniqbal\Sysguard;
 
+use Illuminate\Http\Request;
 use \View;
 use \Input;
 use \Auth;
 
 class UserController extends BaseController {
+
+    protected $rules = [
+        'name' => 'required',
+        'password' => 'required|min:5',
+        'email' => 'required|email',
+    ];
 
     /**
      * Display a listing of the resource.
@@ -36,8 +43,10 @@ class UserController extends BaseController {
      *
      * @return Response
      */
-    public function store()
+    public function store(Request $request)
     {
+        $this->validate($request, $this->rules);
+
         User::create(Input::all());
         return redirect()->route('user.index');
     }
@@ -73,8 +82,10 @@ class UserController extends BaseController {
      * @param  int  $id
      * @return Response
      */
-    public function update($id)
+    public function update(Request $request, $id)
     {
+        $this->validate($request, $this->rules);
+
         $user = User::findOrFail($id);
         $user->update(Input::all());
 

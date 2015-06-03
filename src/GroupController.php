@@ -1,12 +1,19 @@
 <?php
 namespace Ifaniqbal\Sysguard;
 
+use Illuminate\Http\Request;
 use \View;
 use \Input;
 use \DB;
 
 class GroupController extends BaseController {
     
+    protected $rules = [
+        'name' => 'required',
+        'code' => 'required',
+        'level' => 'required|numeric',
+    ];
+
     /**
      * Display a listing of the resource.
      *
@@ -36,9 +43,11 @@ class GroupController extends BaseController {
      *
      * @return Response
      */
-    public function store()
+    public function store(Request $request)
     {
-        DB::transaction(function() use ($id)
+        $this->validate($request, $this->rules);
+
+        DB::transaction(function()
         {
             $group = Group::create(Input::all());
 
@@ -100,8 +109,10 @@ class GroupController extends BaseController {
      * @param  int  $id
      * @return Response
      */
-    public function update($id)
+    public function update(Request $request, $id)
     {
+        $this->validate($request, $this->rules);
+
         DB::transaction(function() use ($id)
         {
             $group = Group::findOrFail($id);

@@ -1,13 +1,17 @@
 <?php
 namespace Ifaniqbal\Sysguard;
 
+use Illuminate\Http\Request;
 use \View;
 use \Redirect;
 use \Input;
-use \Request;
 use \DB;
 
 class PermissionController extends BaseController {
+
+    protected $rules = [
+        'route' => 'required',
+    ];
 
     /**
      * Display a listing of the resource.
@@ -37,8 +41,10 @@ class PermissionController extends BaseController {
      *
      * @return Response
      */
-    public function store()
+    public function store(Request $request)
     {
+        $this->validate($request, $this->rules);
+
         DB::transaction(function() 
         {
             $permission = Permission::create(Input::all());
@@ -80,8 +86,10 @@ class PermissionController extends BaseController {
      * @param  int  $id
      * @return Response
      */
-    public function update($id)
+    public function update(Request $request, $id)
     {
+        $this->validate($request, $this->rules);
+
         DB::transaction(function() use ($id)
         {
             $permission = Permission::findOrFail($id);
