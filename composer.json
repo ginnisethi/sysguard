@@ -14,7 +14,7 @@
         "illuminate/support": "5.0.*",
         "illuminate/database": "5.0.*",
         "illuminate/contracts": "5.0.*",
-        "watson/bootstrap-form": "^0.9.5"
+        "watson/bootstrap-form": "~1"
     },
     "require-dev": {
         "phpunit/phpunit": "~4.0",
