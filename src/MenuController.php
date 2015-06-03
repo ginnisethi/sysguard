@@ -97,7 +97,9 @@ class MenuController extends BaseController {
         DB::transaction(function() use ($id)
         {
             $menu = Menu::findOrFail($id);
-            $menu->update(Input::all());
+            $input = Input::all();
+            $input['enabled'] = Input::has('enabled');
+            $menu->update($input);
 
             if (Input::get('parent_id') != 0)
             {
