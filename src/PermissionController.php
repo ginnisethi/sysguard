@@ -5,67 +5,104 @@ use \View;
 use \Redirect;
 use \Input;
 use \Request;
+use \DB;
 
 class PermissionController extends BaseController {
 
+    /**
+     * Display a listing of the resource.
+     *
+     * @return Response
+     */
     public function index()
     {
-        $this->data['items'] = Permission::orderBy('route')->paginate($this->perPage);
-        View::share('data', $this->data);
-        return View::make('sysguard:pages.permission.index');
+        $permissions = Permission::orderBy('route')->paginate();
+        return View::make('sysguard::resource.permission.index', compact('permissions'));
     }
 
-    public function manage()
-    {
-        $this->data['items'] = Permission::orderBy('route')->get();
-        View::share('data', $this->data);
-        return View::make('sysguard:pages.permission.manage');
-    }
-
-    public function detail($id)
-    {
-        $this->data['item'] = Permission::with('groups')->find($id);
-        $this->data['item']->group->sortBy('name');
-        View::share('data', $this->data);
-        return View::make('sysguard:pages.permission.detail');
-    }
-
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return Response
+     */
     public function create()
     {
-        if (Request::isMethod('get'))
-        {
-            $this->data = array();
-            View::share('data', $this->data);
-            return View::make('sysguard:pages.permission.create');
-        }
-        else if (Request::isMethod('post'))
+        $permission = new Permission;
+        $permissions = Permission::orderBy('route')->get();
+        return View::make('sysguard::resource.permission.create', compact('permissions', 'permission'));
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @return Response
+     */
+    public function store()
+    {
+        DB::transaction(function() 
         {
             $permission = Permission::create(Input::all());
-            return Redirect::to('permission/manage');
-        }
+        });
+
+        return redirect()->route('permission.index');
     }
 
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return Response
+     */
+    public function show($id)
+    {
+        $permission = Permission::with('groups')->findOrFail($id);
+        $permission->groups->sortBy('route');
+        $permissions = Permission::orderBy('route')->get();
+        return View::make('sysguard::resource.permission.show', compact('permission', 'permissions'));
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  int  $id
+     * @return Response
+     */
+    public function edit($id)
+    {
+        $permission = Permission::findOrFail($id);
+        $permissions = Permission::whereNotIn('id', [$id])->get();
+        return View::make('sysguard::resource.permission.edit', compact('permission', 'permissions'));
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  int  $id
+     * @return Response
+     */
     public function update($id)
     {
-        if (Request::isMethod('get'))
+        DB::transaction(function() use ($id)
         {
-            $this->data = array();
-            $this->data['item'] = Permission::find($id);
-            View::share('data', $this->data);
-            return View::make('sysguard:pages.permission.update');
-        }
-        else if (Request::isMethod('post'))
-        {
-            $permission = Permission::find($id);
-            $permission->update(Input::all());
-            return Redirect::to('permission/detail/' . $id);
-        }
+            $permission = Permission::findOrFail($id);
+            $input = Input::all();
+            $input['enabled'] = Input::has('enabled');
+            $permission->update($input);
+        });
+
+        return redirect()->route('permission.show', $id);
     }
 
-    public function delete($id)
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return Response
+     */
+    public function destroy($id)
     {
-        $permission = Permission::find($id);
+        $permission = Permission::findOrFail($id);
         $permission->delete();
-        return Redirect::to('permission/manage');
+        return redirect()->route('permission.index');
     }
 }
