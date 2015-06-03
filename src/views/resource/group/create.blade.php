@@ -1,6 +1,7 @@
 @extends('sysguard::layouts.master')
 @section('content-header')
     <h1>Group</h1>
+    <a href="{{ route('group.index') }}">Back to index</a>
 @stop
 @section('content')
     <div class="row">

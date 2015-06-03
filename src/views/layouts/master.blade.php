@@ -6,6 +6,7 @@
 </head>
 <body class="skin-blue">
     <div class="wrapper">     
+        <a href="{{ route('sysguard.index') }}">Sysguard</a>
         <div class="content-wrapper">
             <section class="content-header">
                 @yield('content-header')
