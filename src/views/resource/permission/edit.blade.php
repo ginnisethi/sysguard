@@ -7,7 +7,7 @@
     <div class="row">
         <div class="col-md-12">
             <div class="box box-primary">
-                {!! BootstrapForm::openHorizontal(['model' => $permission, 'update' => 'permission.update']) !!}
+                {!! BootstrapForm::horizontal(['model' => $permission, 'update' => 'permission.update']) !!}
                 <div class="box-body">
                     @include('sysguard::resource.permission.form')
                     {!! BootstrapForm::submit('Update'); !!}

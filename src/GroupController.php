@@ -33,9 +33,11 @@ class GroupController extends BaseController {
     public function create()
     {
         $group = new Group;
-        $menus = Menu::orderBy('name')->get();
-        $permissions = Permission::orderBy('route')->get();
-        return View::make('sysguard::resource.group.create', compact('group', 'menus', 'permissions'));
+        $groupMenus = [];
+        $groupPermissions = [];
+        $menus = Menu::orderBy('name')->get()->lists('name', 'id');
+        $permissions = Permission::orderBy('route')->lists('route', 'id');
+        return View::make('sysguard::resource.group.create', compact('group', 'menus', 'permissions', 'groupMenus', 'groupPermissions'));
     }
 
     /**
@@ -77,7 +79,13 @@ class GroupController extends BaseController {
                 $query->orderBy('route');
             },
         ))->findOrFail($id);
-        return View::make('sysguard::resource.group.show', compact('group'));
+        
+        $groupMenus = $group->menus->lists('id');
+        $groupPermissions = $group->permissions->lists('id');
+        $menus = $group->menus->lists('name', 'id');
+        $permissions = $group->permissions->lists('route', 'id');
+
+        return View::make('sysguard::resource.group.show', compact('group', 'menus', 'permissions', 'groupMenus', 'groupPermissions'));
     }
 
     /**
@@ -97,10 +105,12 @@ class GroupController extends BaseController {
             },
         ))->findOrFail($id);
 
-        $menus = Menu::orderBy('name')->get();
-        $permissions = Permission::orderBy('route')->get();
+        $menus = Menu::orderBy('name')->get()->lists('name', 'id');
+        $permissions = Permission::orderBy('route')->get()->lists('route', 'id');;
+        $groupMenus = $group->menus->lists('id');
+        $groupPermissions = $group->permissions->lists('id');
 
-        return View::make('sysguard::resource.group.edit', compact('group', 'menus', 'permissions'));
+        return View::make('sysguard::resource.group.edit', compact('group', 'menus', 'permissions', 'groupMenus', 'groupPermissions'));
     }
 
     /**

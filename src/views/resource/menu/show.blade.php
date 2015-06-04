@@ -7,7 +7,7 @@
     <div class="row">
         <div class="col-md-12">
             <div class="box box-primary">
-                {!! BootstrapForm::openHorizontal(['model' => $menu, 'update' => 'menu.update']) !!}
+                {!! BootstrapForm::horizontal(['model' => $menu, 'update' => 'menu.update']) !!}
                 <div class="box-body">
                     @include('sysguard::resource.menu.form')
                 </div>

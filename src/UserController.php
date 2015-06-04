@@ -5,6 +5,7 @@ use Illuminate\Http\Request;
 use \View;
 use \Input;
 use \Auth;
+use \DB;
 
 class UserController extends BaseController {
 
@@ -34,8 +35,9 @@ class UserController extends BaseController {
     public function create()
     {
         $user = new User;
-        $groups = Group::get();
-        return View::make('sysguard::resource.user.create', compact('user', 'group'));
+        $userGroups = [];
+        $groups = Group::get()->lists('name', 'id');
+        return View::make('sysguard::resource.user.create', compact('user', 'groups', 'userGroups'));
     }
 
     /**
@@ -47,7 +49,14 @@ class UserController extends BaseController {
     {
         $this->validate($request, $this->rules);
 
-        User::create(Input::all());
+        DB::transaction(function()
+        {
+            $user = User::create(Input::all());
+
+            $group_ids = Input::get('group_ids')?: [];
+            $user->groups()->sync($group_ids);
+        });
+
         return redirect()->route('user.index');
     }
 
@@ -60,7 +69,9 @@ class UserController extends BaseController {
     public function show($id)
     {
         $user = User::with('groups')->findOrFail($id);
-        return View::make('sysguard::resource.user.show', compact('user'));
+        $userGroups = $user->groups->lists('id');
+        $groups = $user->groups->lists('name', 'id');
+        return View::make('sysguard::resource.user.show', compact('user', 'groups', 'userGroups'));
     }
 
     /**
@@ -72,8 +83,9 @@ class UserController extends BaseController {
     public function edit($id)
     {
         $user = User::with('groups')->findOrFail($id);
-        $groups = Group::get();
-        return View::make('sysguard::resource.user.edit', compact('user', 'groups'));
+        $userGroups = $user->groups->lists('id');
+        $groups = Group::get()->lists('name', 'id');
+        return View::make('sysguard::resource.user.edit', compact('user', 'groups', 'userGroups'));
     }
 
     /**
@@ -86,9 +98,15 @@ class UserController extends BaseController {
     {
         $this->validate($request, $this->rules);
 
-        $user = User::findOrFail($id);
-        $user->update(Input::all());
+        DB::transaction(function() use ($id)
+        {
+            $user = User::findOrFail($id);
+            $user->update(Input::all());
 
+            $group_ids = Input::get('group_ids')?: [];
+            $user->groups()->sync($group_ids);
+        });
+        
         return redirect()->route('user.show', $id);
     }
 
