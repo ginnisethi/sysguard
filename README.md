@@ -117,3 +117,5 @@ To get all permission for current user:
 ```php
 Sysguard::getEffectivePermission();
 ```
+
+TODO: refactor interface
