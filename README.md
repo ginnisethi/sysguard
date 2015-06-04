@@ -70,8 +70,6 @@ Route::get ('/sysguard', ['uses' => '\Ifaniqbal\Sysguard\SysguardController@inde
 
 Route::resource('user', '\Ifaniqbal\Sysguard\UserController', ['except' => ['destroy']]);
 Route::get ('/user/{user}/destroy', ['uses' => '\Ifaniqbal\Sysguard\UserController@destroy', 'as' => 'user.destroy']);
-Route::get ('user/change_password/{id}', '\Ifaniqbal\Sysguard\UserController@changePassword');
-Route::post('user/change_password/{id}', array('before' => 'csrf', 'uses' => '\Ifaniqbal\Sysguard\UserController@changePassword'));
 
 Route::resource('group', '\Ifaniqbal\Sysguard\GroupController', ['except' => ['destroy']]);
 Route::get ('/group/{group}/destroy', ['uses' => '\Ifaniqbal\Sysguard\GroupController@destroy', 'as' => 'group.destroy']);
